@@ -69,29 +69,23 @@ int check_number(string data) {
 int parse_json_credentials(string data, string &username, string &password) {
     vector<string> credentials;
     char data_s[BUFLEN];
+    int i = 0;
     memset(data_s, 0, BUFLEN);
-    credentials = tokenize(data, ",");
 
-    int i = strlen("{\"username\":\"");
-    strcpy(data_s, credentials[0].c_str());
-
-    if (strncmp(data_s, "{\"username\":\"", i)) {
+    if (data.size() < 4) {
+        cout << "Data is empty\n";
         return 1;
     }
 
-    while (1) {
-        if (data_s[i] == '"') {
-            break;
-        }
-        username.push_back(data_s[i]);
-        i++;
-    }
+    credentials = tokenize(data, ",");
 
-    i = strlen("\"password\":\"");
+    i = strlen("{\"password\":\"");
     memset(data_s, 0, BUFLEN);
-    strcpy(data_s, credentials[1].c_str());
+    strcpy(data_s, credentials[0].c_str());
 
-    if (strncmp(data_s, "\"password\":\"", i)) {
+    if (strncmp(data_s, "{\"password\":\"", i)) {
+        cout << "Password field is incorrect\n";
+        cout << data_s << endl;
         return 1;
     }
 
@@ -103,23 +97,11 @@ int parse_json_credentials(string data, string &username, string &password) {
         i++;
     }
 
-    return 0;
-}
-/* receives the data and returns a product */
-int parse_json_product(string data, product &p) {
-    vector<string> prod;
-    char data_s[BUFLEN];
-    memset(data_s, 0, BUFLEN);
-    string aux;
+    i = strlen("\"username\":\"");
+    strcpy(data_s, credentials[1].c_str());
 
-    prod = tokenize(data, ",");
-
-    memset(data_s, 0, BUFLEN);
-    aux.clear();
-    int i = strlen("{\"name\":\"");
-    strcpy(data_s, prod[0].c_str());
-    if (strncmp(data_s, "{\"name\":\"", i)) {
-        // send_error(sockfd);
+    if (strncmp(data_s, "\"username\":\"", i)) {
+        cout << "Username field is incorrect\n";
         return 1;
     }
 
@@ -127,16 +109,30 @@ int parse_json_product(string data, product &p) {
         if (data_s[i] == '"') {
             break;
         }
-        aux.push_back(data_s[i]);
+        username.push_back(data_s[i]);
         i++;
     }
-    p.name = aux;
+
+    return 0;
+}
+/* receives the data and returns a product */
+int parse_json_product(string data, product &p) {
+    vector<string> prod;
+    char data_s[BUFLEN];
+    int i = 0;
+    memset(data_s, 0, BUFLEN);
+    string aux;
+
+    if (data.size() < 4) {
+        return 1;
+    }
+    prod = tokenize(data, ",");
 
     memset(data_s, 0, BUFLEN);
     aux.clear();
-    i = strlen("\"category\":\"");
-    strcpy(data_s, prod[1].c_str());
-    if (strncmp(data_s, "\"category\":\"", i)) {
+    i = strlen("{\"category\":\"");
+    strcpy(data_s, prod[0].c_str());
+    if (strncmp(data_s, "{\"category\":\"", i)) {
         return 1;
     }
 
@@ -149,6 +145,23 @@ int parse_json_product(string data, product &p) {
     }
 
     p.category = aux;
+
+    memset(data_s, 0, BUFLEN);
+    aux.clear();
+    i = strlen("\"name\":\"");
+    strcpy(data_s, prod[1].c_str());
+    if (strncmp(data_s, "\"name\":\"", i)) {
+        return 1;
+    }
+
+    while (1) {
+        if (data_s[i] == '"') {
+            break;
+        }
+        aux.push_back(data_s[i]);
+        i++;
+    }
+    p.name = aux;
 
     memset(data_s, 0, BUFLEN);
     aux.clear();
@@ -254,13 +267,14 @@ int get_id(vector<string> first_line) {
 int check_cookie(vector<string> lines, string &cookie) {
     vector<string> cookie_line;
     for (unsigned long i = 1; i < lines.size(); i++) {
-        if (!lines[i].compare(0, 7, "Cookie:")) {
+        if (!(lines[i].compare(0, 7, "Cookie:"))) {
             if ((lines[i])[7] == ' ') {
                 cookie_line = tokenize(lines[i]);
             } else {
                 cookie_line = tokenize(lines[i], ":");
             }
             cookie = cookie_line[1];
+            cookie.pop_back();
             return 0;
         }
     }
@@ -344,10 +358,9 @@ void get_request(vector<string> lines, vector<string> first_line, int sockfd,
         }
         /* send all the products to client */
     } else if (!first_line[1].compare(CATALOG)) {
-
         if (!check_cookie(lines, cookie) && !check_is_on(cookies, cookie)) {
             data = wrap_all_products(catalog);
-            if (data.size() == 0) {
+            if (data.size() < 4) {
 
                 response = compute_response(NO_CONTENT, HOSTNAME,
                                             CONTENT_TYPE_JSON,
@@ -360,7 +373,6 @@ void get_request(vector<string> lines, vector<string> first_line, int sockfd,
                                             data);
             }
             send_message(sockfd, response.c_str());
-
         } else {
             response = compute_response(UNAUTHORIZED, HOSTNAME,
                                         CONTENT_TYPE_TEXT,
@@ -426,7 +438,7 @@ void post_request(vector<string> lines, vector<string> first_line, int sockfd,
             response = compute_response(FORBIDDEN, HOSTNAME,
                                         CONTENT_TYPE_TEXT,
                                         "", "",
-                                        "error:\"This username is taken\"\n");
+                                        "error:\"Invalid username!\"\n");
             send_message(sockfd, response.c_str());
         }
         /* log in */
@@ -442,7 +454,7 @@ void post_request(vector<string> lines, vector<string> first_line, int sockfd,
             response = compute_response(FORBIDDEN, HOSTNAME,
                                         CONTENT_TYPE_TEXT,
                                         "", "",
-                                        "error:\"Already logged in\"\n");
+                                        "error:\"Invalid username or password\"\n");
             send_message(sockfd, response.c_str());
         }
 
@@ -570,13 +582,16 @@ int register_user(string data, unordered_map<string, user> &users) {
     string username, password;
     user usr;
 
-    parse_json_credentials(data, username, password);
+    if (parse_json_credentials(data, username, password)) {
+        return 1;
+    }
 
-    // user doesn't exist
+    /* user doesn't exist */
     if (users.find(username) == users.end()) {
         usr.username = username;
         usr.password = password;
         users.insert({username, usr});
+
         return 0;
     }
     return 1;
@@ -585,15 +600,24 @@ int register_user(string data, unordered_map<string, user> &users) {
 int login(string data, unordered_map<string, user> &users,
           unordered_map<string, user> &cookies, string &cookie) {
     string username, password;
-    parse_json_credentials(data, username, password);
+    if (parse_json_credentials(data, username, password)) {
+        cout << "Parsing data errors\n";
+        return 1;
+    }
 
     auto usr = users.find(username);
-    // if user exists
+    /* if user exists */
     if (usr != users.end()) {
-        cookie = "cookie";
-        (*usr).second.cookie = cookie;
-        cookies.insert({(*usr).second.cookie, (*usr).second});
-        return 0;
+
+        /* if the password is corect */
+        // if (!((usr->second.password).compare(password))) {
+        if (!(users[username].password).compare(password)) {
+            cookie = "cookie";
+            users[username].cookie = cookie;
+            cookies.insert({cookie, users[username]});
+
+            return 0;
+        }
     }
     return 1;
 }
@@ -607,6 +631,7 @@ int logout(unordered_map<string, user> &users,
     // if cookie exists
     if (entry != cookies.end()) {
         users[entry->second.username].cookie.clear();
+
         cookies.erase(cookie);
         return 0;
     }
@@ -712,12 +737,13 @@ int main(int argc, char *argv[]) {
         // need to check if is GET, POST, PUT or DELETE
         string response = receive(newsockfd);
 
-        cout << response;
+        cout << response << endl;
 
         memset(buffer, 0, BUFLEN);
         strcpy(buffer, response.c_str());
         // all lines from the request
         vector<string> lines = do_segment(buffer);
+        // vector<string> lines = tokenize(response, "\n");
 
         // first line from the request received
         vector<string> first_line = tokenize(lines[0]);
@@ -731,21 +757,21 @@ int main(int argc, char *argv[]) {
             !check_host(second_line[1])) {
 
             if (!first_line[0].compare(GET_REQUEST)) {
-                cout << "GET request\n";
+                // cout << "GET request\n";
                 get_request(lines, first_line, newsockfd, catalog, cookies, users);
 
             } else if (!first_line[0].compare(POST_REQUEST)) {
 
-                cout << "POST request\n";
+                // cout << "POST request\n";
                 post_request(lines, first_line, newsockfd, catalog, cookies, users);
 
             } else if (!first_line[0].compare(PUT_REQUEST)) {
-                cout << "PUT request\n";
+                // cout << "PUT request\n";
 
                 put_request(lines, first_line, newsockfd, catalog, cookies);
 
             } else if (!first_line[0].compare(DELETE_REQUEST)) {
-                cout << "DELETE request\n";
+                // cout << "DELETE request\n";
 
                 delete_request(lines, first_line, newsockfd, catalog, cookies);
             }

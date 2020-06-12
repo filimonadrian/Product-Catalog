@@ -1,26 +1,27 @@
 # Product-Catalog
 
 Installation
-
+------------
 It works only with linux. I've tested on Ubuntu 20.04 LTS.
 
 Prerequisites
 - C++11
-- boost library:
-$ sudo apt install libboost-all-dev
-$ sudo apt install aptitude
-$ aptitude search boost
-
+- boost library:  
+$ sudo apt install libboost-all-dev  
+$ sudo apt install aptitude  
+$ aptitude search boost  
+  
 Usage:
+-----
 
-Build and run server: 
-$ make server && make run_server
-Build and run some tests:
-$ make test && make run_test
-
-For manual testing, i've used telnet.
-$ sudo apt-get install telnetd -y
-
+Build and run server:  
+$ make server && make run_server  
+Build and run some tests:  
+$ make test && make run_test  
+  
+For manual testing, i've used telnet.  
+$ sudo apt-get install telnetd -y  
+  
 For all requests the "Content-Length = <value>" field is mandatory.
 For now, all cookies are hardcoded -> all users has the same cookie.
 The issue will be solved in future updates.

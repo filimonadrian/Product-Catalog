@@ -83,7 +83,7 @@ char *compute_post_request(const char *host, const char *url,
 
     // add cookies
     if (!cookies.empty()) {
-        sprintf(line, "Cookie: %s", help_cookie.c_str());
+        sprintf(line, "Cookie: %s", cookies.c_str());
         compute_message(message, line);
     }
     //add jwt token

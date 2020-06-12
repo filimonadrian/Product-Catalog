@@ -29,9 +29,8 @@ int main(int argc, char *argv[]) {
     message = compute_get_request("localhost", LOGOUT, GET, "", "");
     cout << message << endl;
     send_message(sockfd, message.c_str());
-    cout << receive(sockfd);
+    response = receive(sockfd);
     cout << response << endl;
-
 
     sockfd = open_connection("127.0.0.1", 12345, AF_INET, SOCK_STREAM, 0);
     cout << "GET products without being logged in " << endl;
@@ -49,8 +48,6 @@ int main(int argc, char *argv[]) {
     response = receive(sockfd);
     cout << response << endl;
 
-
-
     sockfd = open_connection("127.0.0.1", 12345, AF_INET, SOCK_STREAM, 0);
     cout << "REGISTER without credentials" << endl;
     message = compute_post_request("localhost", REGISTER, CONTENT_TYPE_JSON,
@@ -65,9 +62,8 @@ int main(int argc, char *argv[]) {
     log["password"] = "password";
 
     json wrong_log;
-    log["username"] = "adrian";
-    log["password"] = "passwor";
-
+    wrong_log["username"] = "adrian";
+    wrong_log["password"] = "passwor";
 
     sockfd = open_connection("127.0.0.1", 12345, AF_INET, SOCK_STREAM, 0);
     cout << "REGISTER with credentials" << endl;
@@ -77,7 +73,6 @@ int main(int argc, char *argv[]) {
     send_message(sockfd, message.c_str());
     response = receive(sockfd);
     cout << response << endl;
-
 
     sockfd = open_connection("127.0.0.1", 12345, AF_INET, SOCK_STREAM, 0);
     cout << "GET all products without being logged in" << endl;
@@ -103,7 +98,6 @@ int main(int argc, char *argv[]) {
     send_message(sockfd, message.c_str());
     response = receive(sockfd);
     cout << response << endl;
-
 
     sockfd = open_connection("127.0.0.1", 12345, AF_INET, SOCK_STREAM, 0);
     cout << "Login with credentials" << endl;
@@ -136,7 +130,6 @@ int main(int argc, char *argv[]) {
     response = receive(sockfd);
     cout << response << endl;
 
-
     prod["name"] = "Honda";
     prod["category"] = "cars";
     prod["price"] = 15986;
@@ -158,7 +151,6 @@ int main(int argc, char *argv[]) {
     response = receive(sockfd);
     cout << response << endl;
 
-
     sockfd = open_connection("127.0.0.1", 12345, AF_INET, SOCK_STREAM, 0);
     cout << "GET only ONE product" << endl;
     message = compute_get_request("localhost", info, GET, "cookie", "");
@@ -166,7 +158,6 @@ int main(int argc, char *argv[]) {
     send_message(sockfd, message.c_str());
     response = receive(sockfd);
     cout << response << endl;
-
 
     sockfd = open_connection("127.0.0.1", 12345, AF_INET, SOCK_STREAM, 0);
     cout << "DELETE first product" << endl;
@@ -176,6 +167,13 @@ int main(int argc, char *argv[]) {
     response = receive(sockfd);
     cout << response << endl;
 
+    sockfd = open_connection("127.0.0.1", 12345, AF_INET, SOCK_STREAM, 0);
+    cout << "GET all products" << endl;
+    message = compute_get_request("localhost", CATALOG, GET, "cookie", "");
+    cout << message << endl;
+    send_message(sockfd, message.c_str());
+    response = receive(sockfd);
+    cout << response << endl;
 
     sockfd = open_connection("127.0.0.1", 12345, AF_INET, SOCK_STREAM, 0);
     cout << "a normal LOGOUT" << endl;
