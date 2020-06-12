@@ -28,68 +28,61 @@ The issue will be solved in future updates.
 
 $ telnet localhost 12345
 
-REGISTER
-POST /auth/register HTTP/1.1
-Host: localhost
-Content-Type: application/json
-Content-Length: 37
+REGISTER  
+POST /auth/register HTTP/1.1  
+Host: localhost  
+Content-Type: application/json  
+Content-Length: 37    
+  
+{"username":"user","password":"pass"}  
+  
+LOGIN  
+POST /auth/login HTTP/1.1   
+Host: localhost  
+Content-Type: application/json  
+Content-Length: 37  
 
-{"username":"user","password":"pass"}
---------
+{"username":"user","password":"pass"}  
 
-LOGIN
-POST /auth/login HTTP/1.1
-Host: localhost
-Content-Type: application/json
-Content-Length: 37
+ADD_PRODUCT  
+POST /catalog/products HTTP/1.1  
+Host: localhost  
+Cookie: Cookie  
+Content-Type: application/json  
+Content-Length: 50  
+  
+{"name":"banana","category":"fruits","price":"10"}  
 
-{"username":"user","password":"pass"}
------
-
-ADD_PRODUCT
-POST /catalog/products HTTP/1.1
-Host: localhost
-Cookie: Cookie
-Content-Type: application/json
-Content-Length: 50
-
-{"name":"banana","category":"fruits","price":"10"}
------------
-
-ALL PRODUCTS
-GET /catalog/products HTTP/1.1
-Host: localhost
-Cookie: Cookie
-Content-Length: 0
-------------
-
-ONE PRODUCT
-GET /catalog/products/PRODUCT_ID HTTP/1.1
-Host: localhost
-Cookie: Cookie
-Content-Length: 0
------------
-
-DELETE
-DELETE /catalog/products/1 HTTP/1.1
-Host: localhost
-Cookie: 
-Content-Length: 0
--------
-
-MODIFY
-PUT /catalog/products/1 HTTP/1.1
-Host: localhost
-Cookie: Cookie
-Content-Length: 0
-
-{"name":"apple","category":"fruits","price":"11"}
-------
-
-LOGOUT
-GET /auth/logout HTTP/1.1
-Host: localhost
-Cookie: Cookie
-Content-Length: 0
-
-------
+ALL PRODUCTS  
+GET /catalog/products HTTP/1.1  
+Host: localhost  
+Cookie: Cookie  
+Content-Length: 0  
+  
+ONE PRODUCT  
+GET /catalog/products/PRODUCT_ID HTTP/1.1  
+Host: localhost  
+Cookie: Cookie  
+Content-Length: 0  
+  
+DELETE  
+DELETE /catalog/products/1 HTTP/1.1  
+Host: localhost  
+Cookie:   
+Content-Length: 0  
+  
+MODIFY  
+PUT /catalog/products/1 HTTP/1.1  
+Host: localhost  
+Cookie: Cookie  
+Content-Length: 0  
+  
+{"name":"apple","category":"fruits","price":"11"}  
+  
+LOGOUT  
+GET /auth/logout HTTP/1.1  
+Host: localhost  
+Cookie: Cookie  
+Content-Length: 0  
+  
+{"name":"banana","category":"fruits","price":"10"}  
