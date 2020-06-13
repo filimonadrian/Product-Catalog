@@ -48,7 +48,7 @@ Content-Length: 37
 ADD_PRODUCT  
 POST /catalog/products HTTP/1.1  
 Host: localhost  
-Cookie: Cookie  
+Cookie: cookie  
 Content-Type: application/json  
 Content-Length: 50  
   
@@ -57,33 +57,31 @@ Content-Length: 50
 ALL PRODUCTS  
 GET /catalog/products HTTP/1.1  
 Host: localhost  
-Cookie: Cookie  
+Cookie: cookie  
 Content-Length: 0  
   
 ONE PRODUCT  
 GET /catalog/products/PRODUCT_ID HTTP/1.1  
 Host: localhost  
-Cookie: Cookie  
+Cookie: cookie  
 Content-Length: 0  
   
 DELETE  
 DELETE /catalog/products/1 HTTP/1.1  
 Host: localhost  
-Cookie:   
+Cookie: cookie  
 Content-Length: 0  
   
 MODIFY  
 PUT /catalog/products/1 HTTP/1.1  
 Host: localhost  
-Cookie: Cookie  
-Content-Length: 0  
+Cookie: cookie  
+Content-Length: 50  
   
 {"name":"apple","category":"fruits","price":"11"}  
   
 LOGOUT  
 GET /auth/logout HTTP/1.1  
 Host: localhost  
-Cookie: Cookie  
+Cookie: cookie  
 Content-Length: 0  
-  
-{"name":"banana","category":"fruits","price":"10"}  

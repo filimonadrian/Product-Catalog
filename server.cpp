@@ -69,7 +69,7 @@ int check_number(string data) {
 int parse_json_credentials(string data, string &username, string &password) {
     vector<string> credentials;
     char data_s[BUFLEN];
-    int i = 0;
+    int i = 0, j = 0;
     memset(data_s, 0, BUFLEN);
 
     if (data.size() < 4) {
@@ -80,40 +80,64 @@ int parse_json_credentials(string data, string &username, string &password) {
     credentials = tokenize(data, ",");
 
     i = strlen("{\"password\":\"");
-    memset(data_s, 0, BUFLEN);
-    strcpy(data_s, credentials[0].c_str());
+    j = strlen("\"username\":\"");
 
-    if (strncmp(data_s, "{\"password\":\"", i)) {
-        cout << "Password field is incorrect\n";
-        cout << data_s << endl;
-        return 1;
-    }
+    if (!strncmp(credentials[0].c_str(), "{\"password\":\"", i) &&
+        !strncmp(credentials[1].c_str(), "\"username\":\"", j)) {
 
-    while (1) {
-        if (data_s[i] == '"') {
-            break;
+        memset(data_s, 0, BUFLEN);
+        strcpy(data_s, credentials[0].c_str());
+
+        while (1) {
+            if (data_s[i] == '"') {
+                break;
+            }
+            password.push_back(data_s[i]);
+            i++;
         }
-        password.push_back(data_s[i]);
-        i++;
-    }
 
-    i = strlen("\"username\":\"");
-    strcpy(data_s, credentials[1].c_str());
+        memset(data_s, 0, BUFLEN);
+        strcpy(data_s, credentials[1].c_str());
 
-    if (strncmp(data_s, "\"username\":\"", i)) {
-        cout << "Username field is incorrect\n";
-        return 1;
-    }
-
-    while (1) {
-        if (data_s[i] == '"') {
-            break;
+        while (1) {
+            if (data_s[j] == '"') {
+                break;
+            }
+            username.push_back(data_s[j]);
+            j++;
         }
-        username.push_back(data_s[i]);
-        i++;
+
+        return 0;
+
+    } else if (!strncmp(credentials[0].c_str(), "{\"username\":\"", i) &&
+               !strncmp(credentials[1].c_str(), "\"password\":\"", j)) {
+
+        memset(data_s, 0, BUFLEN);
+        strcpy(data_s, credentials[0].c_str());
+
+        while (1) {
+            if (data_s[i] == '"') {
+                break;
+            }
+            username.push_back(data_s[i]);
+            i++;
+        }
+
+        memset(data_s, 0, BUFLEN);
+        strcpy(data_s, credentials[1].c_str());
+
+        while (1) {
+            if (data_s[j] == '"') {
+                break;
+            }
+            password.push_back(data_s[j]);
+            j++;
+        }
+
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 /* receives the data and returns a product */
 int parse_json_product(string data, product &p) {
