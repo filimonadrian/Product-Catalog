@@ -1,0 +1,73 @@
+
+ALL PRODUCTS
+----------------
+GET /catalog/products HTTP/1.1
+Host: localhost
+Cookie: cookie
+Content-Length: 0
+
+ONE PRODUCT
+----------------
+GET /catalog/products/1 HTTP/1.1
+Host: localhost
+Cookie: cookie
+Content-Length: 0
+
+
+REGISTER
+--------
+POST /auth/register HTTP/1.1
+Host: localhost
+Content-Type: application/json
+Content-Length: 47
+
+{"username":"user","password":"pass"}
+
+
+LOGIN
+-----
+POST /auth/login HTTP/1.1
+Host: localhost
+Content-Type: application/json
+Content-Length: 43
+
+{"username":"adrian","password":"password"}
+
+LOGOUT
+----------------
+GET /auth/logout HTTP/1.1
+Host: localhost
+Cookie: cookie  
+Content-Length: 0
+
+{"name":"banana","category":"fruits","price":"10"}
+
+
+ADD_PRODUCT
+-----------
+POST /catalog/products HTTP/1.1
+Host: ec2-3-8-116-10.eu-west-2.compute.amazonaws.com
+Cookie: 
+Content-Type: application/json
+Content-Length: 47
+
+{"name":"banana","category":"fruits","price":"10"}
+
+DELETE
+-------
+DELETE /catalog/products/1 HTTP/1.1
+Host: localhost
+Cookie: 
+Content-Length: 0
+
+
+MODIFY
+------
+PUT /catalog/products/2 HTTP/1.1
+Host: localhost
+Cookie: cookie
+Content-Length: 50
+
+{"category":"fruits","name":"banana","price":"10"}
+
+
